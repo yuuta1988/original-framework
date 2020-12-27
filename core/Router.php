@@ -1,17 +1,33 @@
 <?php
 
+/**
+ * Router.
+ *
+ * @author Katsuhiro Ogawa <fivestar@nequal.jp>
+ */
 class Router
 {
     protected $routes;
 
+    /**
+     * コンストラクタ
+     *
+     * @param array $definitions
+     */
     public function __construct($definitions)
     {
         $this->routes = $this->compileRoutes($definitions);
     }
 
+    /**
+     * ルーティング定義配列を内部用に変換する
+     *
+     * @param array $definitions
+     * @return array
+     */
     public function compileRoutes($definitions)
     {
-        $routes = [];
+        $routes = array();
 
         foreach ($definitions as $url => $params) {
             $tokens = explode('/', ltrim($url, '/'));
@@ -23,13 +39,19 @@ class Router
                 $tokens[$i] = $token;
             }
 
-            $patten = '/' . implode('/' . $tokens);
-            $routes[$patten] = $params;
+            $pattern = '/' . implode('/', $tokens);
+            $routes[$pattern] = $params;
         }
 
         return $routes;
     }
 
+    /**
+     * 指定されたPATH_INFOを元にルーティングパラメータを特定する
+     *
+     * @param string $path_info
+     * @return array|false
+     */
     public function resolve($path_info)
     {
         if ('/' !== substr($path_info, 0, 1)) {
